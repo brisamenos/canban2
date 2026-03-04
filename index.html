@@ -367,7 +367,7 @@
                                     <div class="mb-4">
                                         <h5 class="font-black text-[15px] text-slate-900 dark:text-white mb-2 truncate" x-text="rule.nome || rule.trigger_text || 'Fluxo sem nome'"></h5>
                                         <div class="flex items-center gap-2 mb-2"><span x-show="rule.trigger_text" class="text-[9px] bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded-md font-bold uppercase inline-flex items-center gap-1"><i data-lucide="zap" class="w-3 h-3"></i> <span x-text="rule.trigger_text"></span></span><span x-show="!rule.trigger_text" class="text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-1 rounded-md font-bold uppercase inline-flex items-center gap-1">Apenas Manual</span></div>
-                                        <p class="text-xs text-slate-500 font-medium" x-text="rule.flow_steps ? `${rule.flow_steps.length} passo(s)` : 'Regra Simples Antiga'"></p>
+                                        <p class="text-xs text-slate-500 font-medium" x-text="rule.flow_steps ? `${rule.flow_steps.length} passo(s)` : 'Regra Simples'"></p>
                                     </div>
                                     <div class="flex gap-2 justify-end border-t border-gray-100 dark:border-slate-800 pt-3 mt-auto"><button @click="editRule(rule)" class="flex-1 flex justify-center items-center gap-1 bg-blue-50 text-blue-600 dark:bg-blue-900/20 py-2 rounded-xl text-xs font-bold hover:bg-blue-100 transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Editar</button><button @click="deleteBotRule(rule.id)" class="flex-1 flex justify-center items-center gap-1 bg-red-50 text-red-500 dark:bg-red-900/20 py-2 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Excluir</button></div>
                                 </div>
@@ -400,7 +400,7 @@
                                 <div><label class="text-[10px] font-black uppercase text-slate-500 mb-2 block ml-1">O que enviar?</label><div class="flex gap-2"><button @click="agendaForm.tipo = 'simples'" :class="agendaForm.tipo === 'simples' ? 'bg-indigo-100 text-indigo-700 border-indigo-400' : 'bg-slate-50 text-slate-500 border-gray-200 dark:border-slate-700 dark:bg-slate-800'" class="flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all">Texto Simples</button><button @click="agendaForm.tipo = 'fluxo'" :class="agendaForm.tipo === 'fluxo' ? 'bg-indigo-100 text-indigo-700 border-indigo-400' : 'bg-slate-50 text-slate-500 border-gray-200 dark:border-slate-700 dark:bg-slate-800'" class="flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all">Atirar Fluxo Salvo</button></div></div>
                                 <div><label class="text-[10px] font-black uppercase text-slate-500 mb-2 block ml-1">Data e Hora</label><div class="relative"><i data-lucide="calendar" class="absolute left-4 top-4 w-4 h-4 text-slate-400"></i><input type="text" x-ref="dataHoraInput" placeholder="Clique para abrir calendário..." class="w-full bg-slate-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl py-3.5 pl-10 pr-4 text-sm font-bold dark:text-white outline-none cursor-pointer hover:border-indigo-400 transition-colors" x-init="flatpickr($refs.dataHoraInput, { enableTime: true, dateFormat: 'Y-m-d H:i', minDate: 'today', time_24hr: true, locale: 'pt', onChange: function(selectedDates, dateStr) { agendaForm.dataHora = dateStr; } })"></div></div>
                             </div>
-                            <div x-show="agendaForm.tipo === 'simples'" x-transition><textarea x-model="agendaForm.texto" rows="3" placeholder="Escreva a mensagem (Use {nome} para chamar o cliente pelo nome)..." class="w-full bg-slate-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl p-4 text-sm dark:text-white outline-none"></textarea></div>
+                            <div x-show="agendaForm.tipo === 'simples'" x-transition><textarea x-model="agendaForm.texto" rows="3" placeholder="Escreva a mensagem..." class="w-full bg-slate-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl p-4 text-sm dark:text-white outline-none"></textarea></div>
                             <div x-show="agendaForm.tipo === 'fluxo'" x-transition><select x-model="agendaForm.flowId" class="w-full bg-slate-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl p-4 text-sm font-bold dark:text-white outline-none cursor-pointer"><option value="">Selecione o fluxo...</option><template x-for="rule in botRules" :key="rule.id"><option :value="rule.id" x-text="rule.nome || rule.trigger_text || 'Fluxo sem nome'"></option></template></select></div>
                             <button @click="salvarAgendamento()" class="w-full bg-indigo-600 text-white font-black py-4 rounded-xl shadow-lg hover:bg-indigo-700 active:scale-95 transition-all"><i data-lucide="check" class="w-5 h-5 inline mr-1"></i> Agendar Programação</button>
                         </div>
@@ -461,7 +461,7 @@
                 </select>
             </header>
 
-            <div class="absolute inset-0 top-16 bottom-[140px] bg-chat-pattern z-0"></div>
+            <div class="absolute inset-0 top-16 bottom-[100px] bg-chat-pattern z-0"></div>
             
             <div class="flex-1 overflow-y-auto p-4 space-y-3 z-10 no-scrollbar scroll-smooth" id="chat-box">
                 <template x-for="msg in messages" :key="msg.id">
@@ -503,7 +503,7 @@
 
                             <div x-show="shortcutsOpen" x-transition.opacity class="absolute bottom-14 left-0 bg-white dark:bg-slate-800 shadow-xl rounded-2xl p-2 flex flex-col gap-2 z-50 border border-gray-100 dark:border-slate-700 min-w-[200px] max-h-[300px] overflow-y-auto no-scrollbar">
                                 <button @click="msgInput += (msgInput.length ? '\n' : '') + 'Olá! Tudo bem?'; shortcutsOpen=false" class="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl w-full text-left transition-colors">
-                                    <span class="text-lg">👋</span><span class="text-sm font-bold text-slate-700 dark:text-white">Mensagem de Oi</span>
+                                    <span class="text-lg">👋</span><span class="text-sm font-bold text-slate-700 dark:text-white">Dizer Oi</span>
                                 </button>
                                 <div class="w-full h-px bg-gray-100 dark:bg-slate-700 my-0.5"></div>
                                 <template x-for="rule in botRules" :key="rule.id">
@@ -634,11 +634,21 @@
                     const savedCols = localStorage.getItem(`evo_cols_${this.instanceName}`);
                     if(savedCols) { this.columns = JSON.parse(savedCols); }
                     await this.loadLeads(); await this.loadBotRules(); this.loadAgendamentos(); this.setupRealtime();
+                    
                     this.checkConnection();
+                    
                     setInterval(() => { this.checkAgendamentos(); }, 15000);
+                    
+                    // POLLING DE CONEXÃO REFORÇADO (6 SEGUNDOS)
                     setInterval(() => {
-                        if(this.screen === 'conexao' && this.qrStatus !== 'connected' && this.appState === 'crm') { this.checkConnection(); }
-                    }, 5000);
+                        if(this.screen === 'conexao' && this.appState === 'crm') { 
+                            if(this.qrStatus !== 'connected') {
+                                this.getQrCode();
+                            } else {
+                                this.checkConnection();
+                            }
+                        }
+                    }, 6000);
                 },
 
                 async fetchAdminInstances() {
@@ -665,25 +675,37 @@
                     try { await fetch(`https://projeto-evolution-api.xtknqq.easypanel.host/instance/delete/${name}`, { method: 'DELETE', headers: { 'apikey': '773C15E29974-4BA2-B003-3F697EC279AE' } }); this.fetchAdminInstances(); } catch(e) {}
                 },
 
+                // LÓGICA DE VERIFICAÇÃO REFORÇADA
                 async checkConnection() {
                     if(!this.instanceName) return;
                     try {
                         const res = await fetch(`https://projeto-evolution-api.xtknqq.easypanel.host/instance/connectionState/${this.instanceName}`, { headers: { 'apikey': '773C15E29974-4BA2-B003-3F697EC279AE' } });
                         const data = await res.json();
-                        if (data?.instance?.state === 'open') { this.qrStatus = 'connected'; } else { this.getQrCode(); }
+                        if (data?.instance?.state === 'open' || data?.state === 'open') { 
+                            this.qrStatus = 'connected'; 
+                        } else { 
+                            this.getQrCode(); 
+                        }
                     } catch(e) { this.qrStatus = 'disconnected'; }
                 },
                 
-                // NOVO: GERAÇÃO DE QR CODE REFORÇADA PARA EVOLUTION API
+                // NOVO GERA QR CODE A PROVA DE FALHAS
                 async getQrCode() {
                     if (this.qrStatus !== 'qrcode') this.qrStatus = 'checking';
                     try {
-                        const res = await fetch(`https://projeto-evolution-api.xtknqq.easypanel.host/instance/connect/${this.instanceName}`, { headers: { 'apikey': '773C15E29974-4BA2-B003-3F697EC279AE' } });
+                        const res = await fetch(`https://projeto-evolution-api.xtknqq.easypanel.host/instance/connect/${this.instanceName}`, { 
+                            method: 'GET',
+                            headers: { 'apikey': '773C15E29974-4BA2-B003-3F697EC279AE' } 
+                        });
                         const data = await res.json();
                         
-                        let qrData = data?.base64 || data?.qrcode?.base64 || data?.qrcode;
+                        let qrData = data?.base64 || data?.qrcode?.base64 || (data?.code !== 200 ? data?.qrcode : null);
                         
-                        if (qrData && typeof qrData === 'string' && qrData.includes('base64')) { 
+                        if (qrData && typeof qrData === 'string') { 
+                            // Formata o base64 para a imagem ler
+                            if (!qrData.includes('data:image')) {
+                                qrData = 'data:image/png;base64,' + qrData.replace(/^base64,/, '');
+                            }
                             this.qrCodeImage = qrData; 
                             this.qrStatus = 'qrcode'; 
                         } else if (data?.instance?.state === 'open' || data?.state === 'open') { 
