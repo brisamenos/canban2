@@ -32,6 +32,7 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://bernardo-castilho.github.io/DragDropTouch/DragDropTouch.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -51,9 +52,9 @@
         <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 md:p-10 text-center border dark:border-slate-800">
             <div class="w-20 h-20 bg-indigo-600 rounded-3xl flex items-center justify-center shadow-lg mx-auto mb-6"><i data-lucide="zap" class="text-white w-10 h-10"></i></div>
             <h1 class="font-black text-3xl dark:text-white mb-2">EvoCRM <span class="text-indigo-500">SaaS</span></h1>
-            <p class="text-sm text-slate-500 mb-8 font-medium">Digite o nome da instância para conectar.</p>
+            <p class="text-sm text-slate-500 mb-8 font-medium">Crie ou acesse sua instância para começar.</p>
             
-            <input type="text" x-model="loginInput" placeholder="Ex: igor_solar" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 px-5 text-lg font-bold mb-4 text-center outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+            <input type="text" x-model="loginInput" placeholder="Ex: nome_da_empresa" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 px-5 text-lg font-bold mb-4 text-center outline-none focus:ring-2 focus:ring-indigo-500 transition-all uppercase">
             
             <button @click="autoProvision()" :disabled="isLoading" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-all flex justify-center items-center gap-2 text-lg">
                 <span x-show="!isLoading">Provisionar e Entrar</span>
@@ -63,80 +64,64 @@
         </div>
     </div>
 
-    <div x-show="appState === 'crm'" class="flex h-screen w-full relative pt-safe">
-        <aside class="w-64 glass border-r hidden md:flex flex-col z-20 border-gray-200 dark:border-slate-800">
+    <div x-show="appState === 'crm'" class="flex h-screen w-full relative pt-safe" x-cloak>
+        <aside class="w-64 border-r hidden md:flex flex-col z-20 border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900">
             <div class="p-6 border-b border-gray-100 dark:border-slate-800">
-                <h1 class="font-black text-xl dark:text-white">EVO<span class="text-indigo-500">PRO</span></h1>
+                <h1 class="font-black text-xl dark:text-white uppercase tracking-tighter">EvoCRM</h1>
                 <p class="text-[10px] text-slate-400 font-bold uppercase truncate" x-text="'@' + instanceName"></p>
             </div>
-            <nav class="flex-1 p-4 space-y-2">
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto no-scrollbar">
                 <template x-for="item in navItems">
                     <button @click="screen = item.id; setTimeout(() => lucide.createIcons(), 50);" :class="screen === item.id ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all">
                         <i :data-lucide="item.icon" class="w-4 h-4"></i> <span x-text="item.label"></span>
                     </button>
                 </template>
             </nav>
-            <div class="p-4 border-t border-gray-100 dark:border-slate-800 text-center">
-                <button @click="logout()" class="w-full py-3 mb-4 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold hover:text-red-500 transition-colors flex items-center justify-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Sair da Conta</button>
-                <p class="text-[10px] font-black text-indigo-500">Igor Lima</p>
+            <div class="p-4 border-t border-gray-100 dark:border-slate-800">
+                <button @click="logout()" class="w-full py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:text-red-500 transition-colors"><i data-lucide="log-out" class="w-4 h-4"></i> Sair</button>
+                <p class="text-[10px] font-black text-indigo-500 text-center mt-3 uppercase">Igor Lima</p>
             </div>
         </aside>
 
         <main class="flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
             <header x-show="screen !== 'chats'" class="h-16 px-8 flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
-                <h2 class="font-black text-xl dark:text-white uppercase tracking-tighter" x-text="navItems.find(i => i.id === screen)?.label"></h2>
-                <div class="flex items-center gap-4">
-                    <span class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-bold dark:bg-indigo-900/30" x-text="'Instância: ' + instanceName"></span>
-                    <button @click="isDarkMode = !isDarkMode" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg"><i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-5 h-5"></i></button>
-                </div>
+                <h2 class="font-black text-xl dark:text-white uppercase" x-text="navItems.find(i => i.id === screen)?.label"></h2>
+                <button @click="isDarkMode = !isDarkMode" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg"><i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-5 h-5"></i></button>
             </header>
 
             <div class="flex-1 overflow-auto p-4 md:p-8 no-scrollbar pb-24 md:pb-8">
-                
                 <div x-show="screen === 'conexao'" class="max-w-xl mx-auto text-center space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-sm border border-slate-200 dark:border-slate-800">
                         <div x-show="qrStatus === 'connected'" class="space-y-4">
-                            <div class="w-20 h-20 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30"><i data-lucide="check" class="w-10 h-10"></i></div>
-                            <h3 class="text-2xl font-black dark:text-white">Conectado com Sucesso!</h3>
-                            <p class="text-slate-500 text-sm">A sua instância está ativa e pronta para uso.</p>
-                            <button @click="disconnect()" class="px-8 py-4 bg-red-50 text-red-600 font-black rounded-2xl mt-4 active:scale-95 transition-all">Desconectar WhatsApp</button>
+                            <div class="w-20 h-20 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-lg"><i data-lucide="check" class="w-10 h-10"></i></div>
+                            <h3 class="text-2xl font-black dark:text-white uppercase">WhatsApp Ativo</h3>
+                            <button @click="disconnect()" class="px-8 py-4 bg-red-50 text-red-600 font-black rounded-2xl mt-4 active:scale-95 transition-all">Desconectar</button>
                         </div>
-
                         <div x-show="qrStatus !== 'connected'" class="space-y-6">
                             <div class="bg-white p-4 rounded-3xl inline-block shadow-xl border border-slate-100 min-w-[280px] min-h-[280px]">
                                 <template x-if="qrCodeImage"><img :src="qrCodeImage" class="w-64 h-64 object-contain rounded-xl"></template>
-                                <template x-if="!qrCodeImage"><div class="w-64 h-64 flex flex-col items-center justify-center bg-slate-50 rounded-xl text-slate-300 animate-pulse"><i data-lucide="qr-code" class="w-12 h-12 mb-2"></i><span>Gerando QR Code...</span></div></template>
+                                <template x-if="!qrCodeImage"><div class="w-64 h-64 flex flex-col items-center justify-center bg-slate-50 rounded-xl text-slate-300 animate-pulse"><i data-lucide="qr-code" class="w-12 h-12 mb-2"></i><span>A carregar...</span></div></template>
                             </div>
-                            <h3 class="text-xl font-black dark:text-white">Escaneie para Conectar</h3>
-                            <p class="text-sm text-slate-500 max-w-xs mx-auto">Vá em Aparelhos Conectados no seu WhatsApp e aponte a câmera para esta tela.</p>
-                            <button @click="checkConn()" class="text-indigo-500 text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto"><i data-lucide="refresh-cw" class="w-4 h-4 animate-spin-slow"></i> Forçar Atualização</button>
+                            <h3 class="text-xl font-black dark:text-white">Conectar Telemóvel</h3>
+                            <button @click="checkConn()" class="text-indigo-500 text-xs font-black uppercase flex items-center justify-center gap-2 mx-auto"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Atualizar QR</button>
                         </div>
                     </div>
                 </div>
-
-                <div x-show="screen === 'kanban'"> [Seu Funil Kanban Aqui] </div>
-                <div x-show="screen === 'chats'"> [Sua Lista de Conversas Aqui] </div>
-
+                <div x-show="screen === 'chats'"> [Aba Conversas] </div>
+                <div x-show="screen === 'kanban'"> [Aba Funil] </div>
             </div>
         </main>
-
-        <div x-show="isChatOpen" x-cloak class="fixed inset-0 z-[600] flex flex-col md:left-auto md:right-0 md:w-[500px] bg-white dark:bg-slate-900 shadow-2xl border-l dark:border-slate-800">
-             </div>
-
     </div>
 
     <script>
         function crmApp() {
             return {
-                // ==========================================
-                // CONFIGURAÇÕES DO SERVIDOR (EDITE AQUI)
-                // ==========================================
-                EVO_URL: 'https://projeto-evolution-api.xtknqq.easypanel.host',
-                ADMIN_API_KEY: '773C15E29974-4BA2-B003-3F697EC279AE', // Chave mestre para CRIAR instâncias
-                WEBHOOK_URL: 'https://qhnbisjogpdoyszpsucs.supabase.co/functions/v1/evolution', // URL da sua Edge Function
-                SB_URL: 'https://qhnbisjogpdoyszpsucs.supabase.co',
-                SB_KEY: 'sb_publishable_3PAly_BCdvoldAzm1Y7SxQ_S3rp2QhQ',
-                // ==========================================
+                // CONFIGURAÇÕES GLOBAIS - COLE AS SUAS AQUI
+                EVO_URL: 'SUA_URL_EVOLUTION_API',
+                ADMIN_API_KEY: 'SUA_GLOBAL_API_KEY',
+                WEBHOOK_URL: 'SUA_URL_SUPABASE_FUNCTION',
+                SB_URL: 'SUA_URL_SUPABASE',
+                SB_KEY: 'SUA_SUPABASE_ANON_KEY',
 
                 appState: 'auth', loginInput: '', instanceName: '', qrStatus: 'disconnected', 
                 qrCodeImage: '', isDarkMode: true, isLoading: false, screen: 'conexao',
@@ -161,7 +146,7 @@
                     lucide.createIcons();
                 },
 
-                // 🚀 SISTEMA DE AUTO-PROVISIONAMENTO (CRIA TUDO NO HTML)
+                // 🚀 SISTEMA DE AUTO-CREATION (CRIA INSTÂNCIA E WEBHOOK NO LOGIN)
                 async autoProvision() {
                     if(!this.loginInput.trim()) return;
                     this.isLoading = true;
@@ -170,13 +155,13 @@
                     try {
                         const headers = { 'apikey': this.ADMIN_API_KEY, 'Content-Type': 'application/json' };
                         
-                        // 1. Tenta criar a instância (A API retorna erro se já existir, tratamos no catch)
+                        // 1. Tenta Criar Instância
                         await fetch(`${this.EVO_URL}/instance/create`, {
                             method: 'POST', headers,
                             body: JSON.stringify({ "instanceName": name, "qrcode": true, "integration": "WHATSAPP-BAILEYS" })
                         });
 
-                        // 2. Seta o Webhook automaticamente para o seu Supabase
+                        // 2. Tenta Configurar Webhook
                         await fetch(`${this.EVO_URL}/webhook/set/${name}`, {
                             method: 'POST', headers,
                             body: JSON.stringify({
@@ -187,16 +172,12 @@
                             })
                         });
 
-                        // 3. Loga no sistema
                         this.instanceName = name;
                         localStorage.setItem('evo_session', JSON.stringify({ name: this.instanceName }));
                         this.appState = 'crm';
                         this.startCRM();
-                        this.addNotification('Sucesso', 'Instância configurada e pronta!', 'success');
                     } catch(e) {
-                        // Se cair aqui mas o status for 403/401 é erro de chave. Se for 404/500 é servidor.
-                        console.error(e);
-                        // Caso a instância já exista, apenas logamos
+                        // Se houver erro de criação (ex: instância já existe), tentamos apenas logar
                         this.instanceName = name;
                         localStorage.setItem('evo_session', JSON.stringify({ name: this.instanceName }));
                         this.appState = 'crm';
@@ -207,10 +188,9 @@
                 async startCRM() {
                     this.checkConn();
                     this.fetchLeads();
-                    // Monitoramento constante da conexão
                     setInterval(() => {
                         if(this.screen === 'conexao' && this.appState === 'crm') this.checkConn();
-                    }, 6000);
+                    }, 8000);
                 },
 
                 async checkConn() {
@@ -221,12 +201,12 @@
                             this.qrStatus = 'connected';
                         } else {
                             this.qrStatus = 'qrcode';
-                            this.fetchQR();
+                            this.getQR();
                         }
                     } catch(e) { this.qrStatus = 'disconnected'; }
                 },
 
-                async fetchQR() {
+                async getQR() {
                     try {
                         const res = await fetch(`${this.EVO_URL}/instance/connect/${this.instanceName}`, { headers: { 'apikey': this.ADMIN_API_KEY } });
                         const data = await res.json();
@@ -238,22 +218,18 @@
                 },
 
                 async disconnect() {
-                    if(!confirm("Deseja desconectar o telemóvel desta instância?")) return;
-                    try {
-                        await fetch(`${this.EVO_URL}/instance/logout/${this.instanceName}`, { method: 'DELETE', headers: { 'apikey': this.ADMIN_API_KEY } });
-                        this.qrCodeImage = '';
-                        this.qrStatus = 'disconnected';
-                        setTimeout(() => this.checkConn(), 2000);
-                    } catch(e) {}
+                    if(!confirm("Desconectar o WhatsApp?")) return;
+                    await fetch(`${this.EVO_URL}/instance/logout/${this.instanceName}`, { method: 'DELETE', headers: { 'apikey': this.ADMIN_API_KEY } });
+                    this.qrCodeImage = '';
+                    this.checkConn();
                 },
 
+                // [FUNÇÕES DE BUSCA DE LEADS E MENSAGENS DO ARQUIVO ANTERIOR...]
                 async fetchLeads() {
                     const { data } = await this.client.from('leads').select('*').eq('instance_name', this.instanceName).order('created_at', {ascending: false});
                     if(data) this.leads = data;
                 },
-
-                logout() { localStorage.removeItem('evo_session'); location.reload(); },
-                addNotification(title, message, type) { /* Sua lógica de Toast aqui */ }
+                logout() { localStorage.removeItem('evo_session'); location.reload(); }
             }
         }
     </script>
