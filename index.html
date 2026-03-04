@@ -38,12 +38,14 @@
     <style>
         [x-cloak] { display: none !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .bg-pattern { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .bg-pattern { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
         .bg-chat-pattern { background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-repeat: repeat; opacity: 0.6; }
         .dark .bg-chat-pattern { opacity: 0.05; }
+        .kanban-col { min-width: 88vw; max-width: 88vw; height: calc(100vh - 180px); scroll-snap-align: center; }
+        @media (min-width: 768px) { .kanban-col { min-width: 320px; max-width: 320px; height: calc(100vh - 200px); } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 antialiased font-sans overflow-hidden bg-pattern">
+<body class="bg-bg-light text-slate-800 dark:bg-bg-dark dark:text-slate-200 antialiased font-sans overflow-hidden transition-colors duration-300 bg-pattern">
 
     <div x-show="appState === 'auth'" class="fixed inset-0 flex items-center justify-center z-[500] bg-slate-50 dark:bg-slate-950 p-4">
         <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 md:p-10 text-center border dark:border-slate-800">
@@ -53,7 +55,7 @@
             
             <input type="text" x-model="loginInput" placeholder="Ex: igor_solar" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 px-5 text-lg font-bold mb-4 text-center outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
             
-            <button @click="autoProvision()" :disabled="isLoading" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-all flex justify-center items-center gap-2">
+            <button @click="autoProvision()" :disabled="isLoading" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-all flex justify-center items-center gap-2 text-lg">
                 <span x-show="!isLoading">Provisionar e Entrar</span>
                 <span x-show="isLoading" class="animate-spin"><i data-lucide="loader"></i></span>
             </button>
@@ -61,71 +63,85 @@
         </div>
     </div>
 
-    <div x-show="appState === 'crm'" class="flex h-screen w-full relative">
-        <aside class="w-64 border-r hidden md:flex flex-col bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+    <div x-show="appState === 'crm'" class="flex h-screen w-full relative pt-safe">
+        <aside class="w-64 glass border-r hidden md:flex flex-col z-20 border-gray-200 dark:border-slate-800">
+            <div class="p-6 border-b border-gray-100 dark:border-slate-800">
                 <h1 class="font-black text-xl dark:text-white">EVO<span class="text-indigo-500">PRO</span></h1>
                 <p class="text-[10px] text-slate-400 font-bold uppercase truncate" x-text="'@' + instanceName"></p>
             </div>
             <nav class="flex-1 p-4 space-y-2">
                 <template x-for="item in navItems">
-                    <button @click="screen = item.id; setTimeout(() => lucide.createIcons(), 50);" :class="screen === item.id ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all">
+                    <button @click="screen = item.id; setTimeout(() => lucide.createIcons(), 50);" :class="screen === item.id ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all">
                         <i :data-lucide="item.icon" class="w-4 h-4"></i> <span x-text="item.label"></span>
                     </button>
                 </template>
             </nav>
-            <div class="p-4 border-t border-slate-100 dark:border-slate-800 text-center">
-                <button @click="logout()" class="w-full py-3 mb-4 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold hover:text-red-500 transition-colors">Sair</button>
+            <div class="p-4 border-t border-gray-100 dark:border-slate-800 text-center">
+                <button @click="logout()" class="w-full py-3 mb-4 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold hover:text-red-500 transition-colors flex items-center justify-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Sair da Conta</button>
                 <p class="text-[10px] font-black text-indigo-500">Igor Lima</p>
             </div>
         </aside>
 
         <main class="flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
-            <header class="h-16 px-8 flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
+            <header x-show="screen !== 'chats'" class="h-16 px-8 flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
                 <h2 class="font-black text-xl dark:text-white uppercase tracking-tighter" x-text="navItems.find(i => i.id === screen)?.label"></h2>
-                <button @click="isDarkMode = !isDarkMode" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg"><i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-5 h-5"></i></button>
+                <div class="flex items-center gap-4">
+                    <span class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-bold dark:bg-indigo-900/30" x-text="'Instância: ' + instanceName"></span>
+                    <button @click="isDarkMode = !isDarkMode" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg"><i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-5 h-5"></i></button>
+                </div>
             </header>
 
-            <div class="flex-1 overflow-auto p-4 md:p-8 no-scrollbar">
+            <div class="flex-1 overflow-auto p-4 md:p-8 no-scrollbar pb-24 md:pb-8">
                 
                 <div x-show="screen === 'conexao'" class="max-w-xl mx-auto text-center space-y-6">
                     <div class="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-sm border border-slate-200 dark:border-slate-800">
                         <div x-show="qrStatus === 'connected'" class="space-y-4">
-                            <div class="w-20 h-20 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-lg"><i data-lucide="check" class="w-10 h-10"></i></div>
+                            <div class="w-20 h-20 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30"><i data-lucide="check" class="w-10 h-10"></i></div>
                             <h3 class="text-2xl font-black dark:text-white">Conectado com Sucesso!</h3>
-                            <button @click="disconnect()" class="px-6 py-3 bg-red-50 text-red-600 font-bold rounded-xl mt-4">Desconectar Número</button>
+                            <p class="text-slate-500 text-sm">A sua instância está ativa e pronta para uso.</p>
+                            <button @click="disconnect()" class="px-8 py-4 bg-red-50 text-red-600 font-black rounded-2xl mt-4 active:scale-95 transition-all">Desconectar WhatsApp</button>
                         </div>
 
                         <div x-show="qrStatus !== 'connected'" class="space-y-6">
-                            <div class="bg-white p-4 rounded-3xl inline-block shadow-xl border border-slate-100">
+                            <div class="bg-white p-4 rounded-3xl inline-block shadow-xl border border-slate-100 min-w-[280px] min-h-[280px]">
                                 <template x-if="qrCodeImage"><img :src="qrCodeImage" class="w-64 h-64 object-contain rounded-xl"></template>
-                                <template x-if="!qrCodeImage"><div class="w-64 h-64 flex flex-col items-center justify-center bg-slate-100 rounded-xl text-slate-300 animate-pulse"><i data-lucide="qr-code" class="w-12 h-12"></i><span>Buscando QR...</span></div></template>
+                                <template x-if="!qrCodeImage"><div class="w-64 h-64 flex flex-col items-center justify-center bg-slate-50 rounded-xl text-slate-300 animate-pulse"><i data-lucide="qr-code" class="w-12 h-12 mb-2"></i><span>Gerando QR Code...</span></div></template>
                             </div>
-                            <h3 class="text-xl font-black dark:text-white">Conectar WhatsApp</h3>
-                            <p class="text-sm text-slate-500">Escaneie o código acima para ativar a instância.</p>
+                            <h3 class="text-xl font-black dark:text-white">Escaneie para Conectar</h3>
+                            <p class="text-sm text-slate-500 max-w-xs mx-auto">Vá em Aparelhos Conectados no seu WhatsApp e aponte a câmera para esta tela.</p>
+                            <button @click="checkConn()" class="text-indigo-500 text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto"><i data-lucide="refresh-cw" class="w-4 h-4 animate-spin-slow"></i> Forçar Atualização</button>
                         </div>
                     </div>
                 </div>
 
-                <div x-show="screen === 'chats'"> [Aba de Conversas Aqui] </div>
-                <div x-show="screen === 'kanban'"> [Aba de Funil Aqui] </div>
+                <div x-show="screen === 'kanban'"> [Seu Funil Kanban Aqui] </div>
+                <div x-show="screen === 'chats'"> [Sua Lista de Conversas Aqui] </div>
 
             </div>
         </main>
+
+        <div x-show="isChatOpen" x-cloak class="fixed inset-0 z-[600] flex flex-col md:left-auto md:right-0 md:w-[500px] bg-white dark:bg-slate-900 shadow-2xl border-l dark:border-slate-800">
+             </div>
+
     </div>
 
     <script>
         function crmApp() {
             return {
-                // CONFIGURAÇÕES GLOBAIS - ATUALIZE AQUI
+                // ==========================================
+                // CONFIGURAÇÕES DO SERVIDOR (EDITE AQUI)
+                // ==========================================
                 EVO_URL: 'https://projeto-evolution-api.xtknqq.easypanel.host',
-                ADMIN_API_KEY: '773C15E29974-4BA2-B003-3F697EC279AE',
-                WEBHOOK_URL: 'https://qhnbisjogpdoyszpsucs.supabase.co/functions/v1/evolution',
+                ADMIN_API_KEY: '773C15E29974-4BA2-B003-3F697EC279AE', // Chave mestre para CRIAR instâncias
+                WEBHOOK_URL: 'https://qhnbisjogpdoyszpsucs.supabase.co/functions/v1/evolution', // URL da sua Edge Function
                 SB_URL: 'https://qhnbisjogpdoyszpsucs.supabase.co',
                 SB_KEY: 'sb_publishable_3PAly_BCdvoldAzm1Y7SxQ_S3rp2QhQ',
+                // ==========================================
 
                 appState: 'auth', loginInput: '', instanceName: '', qrStatus: 'disconnected', 
                 qrCodeImage: '', isDarkMode: true, isLoading: false, screen: 'conexao',
+                isChatOpen: false, selectedLead: null, messages: [], leads: [], msgInput: '',
+                notifications: [],
                 navItems: [
                     { id: 'dash', label: 'Dashboard', icon: 'pie-chart' },
                     { id: 'kanban', label: 'Funil', icon: 'columns' },
@@ -145,80 +161,99 @@
                     lucide.createIcons();
                 },
 
-                // 🚀 PROVISIONAMENTO AUTOMÁTICO COM TRATAMENTO DE CORS
+                // 🚀 SISTEMA DE AUTO-PROVISIONAMENTO (CRIA TUDO NO HTML)
                 async autoProvision() {
                     if(!this.loginInput.trim()) return;
                     this.isLoading = true;
-                    const name = this.loginInput.trim().toLowerCase();
+                    const name = this.loginInput.trim().toLowerCase().replace(/\s+/g, '_');
 
                     try {
-                        // Tenta criar (Se já existir, a API apenas dará erro, que ignoramos)
+                        const headers = { 'apikey': this.ADMIN_API_KEY, 'Content-Type': 'application/json' };
+                        
+                        // 1. Tenta criar a instância (A API retorna erro se já existir, tratamos no catch)
                         await fetch(`${this.EVO_URL}/instance/create`, {
-                            method: 'POST',
-                            headers: { 'apikey': this.ADMIN_API_KEY, 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ "instanceName": name, "qrcode": true })
-                        }).catch(e => console.log("Instância talvez já exista"));
-
-                        // Configura Webhook
-                        await fetch(`${this.EVO_URL}/webhook/set/${name}`, {
-                            method: 'POST',
-                            headers: { 'apikey': this.ADMIN_API_KEY, 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ "url": this.WEBHOOK_URL, "enabled": true, "events": ["MESSAGES_UPSERT"] })
+                            method: 'POST', headers,
+                            body: JSON.stringify({ "instanceName": name, "qrcode": true, "integration": "WHATSAPP-BAILEYS" })
                         });
 
+                        // 2. Seta o Webhook automaticamente para o seu Supabase
+                        await fetch(`${this.EVO_URL}/webhook/set/${name}`, {
+                            method: 'POST', headers,
+                            body: JSON.stringify({
+                                "url": this.WEBHOOK_URL,
+                                "enabled": true,
+                                "webhook_by_events": false,
+                                "events": ["MESSAGES_UPSERT", "MESSAGES_UPDATE", "SEND_MESSAGE", "CONNECTION_UPDATE"]
+                            })
+                        });
+
+                        // 3. Loga no sistema
                         this.instanceName = name;
                         localStorage.setItem('evo_session', JSON.stringify({ name: this.instanceName }));
                         this.appState = 'crm';
                         this.startCRM();
+                        this.addNotification('Sucesso', 'Instância configurada e pronta!', 'success');
                     } catch(e) {
-                        alert("Erro de CORS ou Servidor Offline. Verifique as configurações de ORIGIN no servidor.");
+                        // Se cair aqui mas o status for 403/401 é erro de chave. Se for 404/500 é servidor.
+                        console.error(e);
+                        // Caso a instância já exista, apenas logamos
+                        this.instanceName = name;
+                        localStorage.setItem('evo_session', JSON.stringify({ name: this.instanceName }));
+                        this.appState = 'crm';
+                        this.startCRM();
                     } finally { this.isLoading = false; }
                 },
 
                 async startCRM() {
                     this.checkConn();
-                    setInterval(() => this.checkConn(), 10000);
+                    this.fetchLeads();
+                    // Monitoramento constante da conexão
+                    setInterval(() => {
+                        if(this.screen === 'conexao' && this.appState === 'crm') this.checkConn();
+                    }, 6000);
                 },
 
                 async checkConn() {
-                    if (this.appState !== 'crm') return;
                     try {
-                        const res = await fetch(`${this.EVO_URL}/instance/connectionState/${this.instanceName}`, { 
-                            headers: { 'apikey': this.ADMIN_API_KEY } 
-                        });
+                        const res = await fetch(`${this.EVO_URL}/instance/connectionState/${this.instanceName}`, { headers: { 'apikey': this.ADMIN_API_KEY } });
                         const data = await res.json();
                         if (data?.instance?.state === 'open' || data?.state === 'open') {
                             this.qrStatus = 'connected';
                         } else {
                             this.qrStatus = 'qrcode';
-                            this.getQR();
+                            this.fetchQR();
                         }
-                    } catch(e) { console.log("Erro ao checar conexão"); }
+                    } catch(e) { this.qrStatus = 'disconnected'; }
                 },
 
-                async getQR() {
+                async fetchQR() {
                     try {
-                        const res = await fetch(`${this.EVO_URL}/instance/connect/${this.instanceName}`, { 
-                            headers: { 'apikey': this.ADMIN_API_KEY } 
-                        });
+                        const res = await fetch(`${this.EVO_URL}/instance/connect/${this.instanceName}`, { headers: { 'apikey': this.ADMIN_API_KEY } });
                         const data = await res.json();
-                        let qr = data?.base64 || data?.qrcode?.base64;
-                        if (qr) {
-                            this.qrCodeImage = qr.startsWith('data') ? qr : 'data:image/png;base64,' + qr;
+                        let qr = data?.base64 || data?.qrcode?.base64 || data?.code;
+                        if (qr && typeof qr === 'string' && qr.length > 50) {
+                            this.qrCodeImage = qr.includes('base64') ? qr : 'data:image/png;base64,' + qr;
                         }
                     } catch(e) {}
                 },
 
                 async disconnect() {
-                    if(!confirm("Desconectar?")) return;
-                    await fetch(`${this.EVO_URL}/instance/logout/${this.instanceName}`, { 
-                        method: 'DELETE', headers: { 'apikey': this.ADMIN_API_KEY } 
-                    });
-                    this.qrStatus = 'disconnected';
-                    this.qrCodeImage = '';
+                    if(!confirm("Deseja desconectar o telemóvel desta instância?")) return;
+                    try {
+                        await fetch(`${this.EVO_URL}/instance/logout/${this.instanceName}`, { method: 'DELETE', headers: { 'apikey': this.ADMIN_API_KEY } });
+                        this.qrCodeImage = '';
+                        this.qrStatus = 'disconnected';
+                        setTimeout(() => this.checkConn(), 2000);
+                    } catch(e) {}
                 },
 
-                logout() { localStorage.removeItem('evo_session'); location.reload(); }
+                async fetchLeads() {
+                    const { data } = await this.client.from('leads').select('*').eq('instance_name', this.instanceName).order('created_at', {ascending: false});
+                    if(data) this.leads = data;
+                },
+
+                logout() { localStorage.removeItem('evo_session'); location.reload(); },
+                addNotification(title, message, type) { /* Sua lógica de Toast aqui */ }
             }
         }
     </script>
